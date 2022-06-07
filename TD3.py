@@ -79,7 +79,7 @@ class TD3(object):
 		action_dim,
 		max_action,
 		discount=0.99,
-		tau=0.005,
+		tau=4e-3,
 		policy_noise=0.2,
 		noise_clip=0.5,
 		policy_freq=2
@@ -87,11 +87,11 @@ class TD3(object):
 
 		self.actor = Actor(state_dim, action_dim, max_action).to(device)
 		self.actor_target = copy.deepcopy(self.actor)
-		self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), lr=3e-4)
+		self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), lr=5e-4)
 
 		self.critic = Critic(state_dim, action_dim).to(device)
 		self.critic_target = copy.deepcopy(self.critic)
-		self.critic_optimizer = torch.optim.Adam(self.critic.parameters(), lr=3e-4)
+		self.critic_optimizer = torch.optim.Adam(self.critic.parameters(), lr=5e-4)
 
 		self.max_action = max_action
 		self.discount = discount
@@ -124,7 +124,7 @@ class TD3(object):
 		return torch.sum(weighted_squared_error) / torch.numel(weighted_squared_error)
 
 
-	def train(self, replay_buffer, batch_size=256):
+	def train(self, replay_buffer, batch_size=1024):
 		self.total_it += 1
 
 		# Sample replay buffer 
